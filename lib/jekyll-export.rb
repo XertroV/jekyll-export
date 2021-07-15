@@ -3,3 +3,4 @@
 require "jekyll/page_without_a_file"
 require "jekyll/jekyll-export"
 require "jekyll/load_raw_filter"
+require "jekyll/export_filters"

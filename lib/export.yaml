@@ -6,18 +6,23 @@ metadata:
     {%- assign pages = site.html_pages | where_exp:'doc','doc.export != false' | where_exp:'doc','doc.url != "/404.html" and doc.url != "/"' -%}
     {%- for doc in pages %}
     {{ doc.url }}: "https://legacy-location.example.com{{ doc.url }}"
-    {{ doc.path | jsonify }}
+    {%- if doc.url == "/page2/" %}
+    {%- endif %}
+    {%- comment %-}
     {%- if doc.name == "index.html" %}
-    {{ doc.path | replace: "index.html", "" }}: "https://legacy-location.example.com{{ doc.path }}"
-    {{ doc.path | replace: "/index.html", "" }}: "https://legacy-location.example.com{{ doc.path }}"
+    {{ doc.url | rstrip_slash }}: "https://legacy-location.example.com{{ doc.url }}"
+    {{ doc.url }}index.html: "https://legacy-location.example.com{{ doc.url }}"
     {%- endif -%}
+    {%- endcomment -%}
     {%- endfor -%}
     {%- assign static_files = page.static_files | where_exp:'page','page.export != false' | where_exp:'page','page.name != "404.html"' -%}
     {%- for file in static_files %}
     {{ file.path }}: "https://legacy-location.example.com{{ file.path }}"
     {%- if file.name == "index.html" %}
     {{ file.path | replace: "index.html", "" }}: "https://legacy-location.example.com{{ file.path }}"
+    {%- comment -%}
     {{ file.path | replace: "/index.html", "" }}: "https://legacy-location.example.com{{ file.path }}"
+    {%- endcomment -%}
     {%- endif -%}
     {%- endfor %}
 
@@ -27,50 +32,24 @@ posts:
     {%- assign docs = collection.docs | where_exp:'doc','doc.export != false' -%}
     {%- for doc in docs %}
   - title: {{ doc.title | jsonify }}
-    body: {{ doc.path | load_raw | split: "---" | slice: 2, 999999 | join: "---" | jsonify }}
-    doc: {{ doc.keys | join: ", " }}
+    {%- assign body = doc.path | load_raw | split: "---" | slice: 2, 999999 | join: "---" | jsonify -%}
+    {%- assign body_contains_html = body | contains_html %}
+    body: {{ body }}
     date: {{ doc.date | date_to_rfc822 }}
     format: {% if doc.ext == ".md" %}markdown{% elsif doc.ext == ".html" %}html{% else %}unknown{% endif %}
-    path2: {{ doc.relative_path }}
-    path1: {{ doc.path }}
     import_id: {{ doc.id }}
-    collection: {{ doc.collection }}
-    postlet: {{ doc.postlet }}
     author: {{ doc.author }}
-    slug: {{ doc.slug }}
-    keys: {{ doc.keys | jsonify }}
+    {% if doc.ext == ".html" or body_contains_html -%}
+    escape_html: false
+    {% endif -%}
+    postlet: {{ doc.postlet }}
     redirects:
-      - {{ doc.url | split: "" | reverse | join: "" | replace_first: "/", "" | split: "" | reverse | join: "" }}
+      - {{ doc.url | rstrip_slash }}
       - {{ doc.url }}
       - {{ doc.url }}index.html
 
     {% endfor -%}
   {%- endfor -%}
-
-  {% comment %}
-  {% assign pages = site.html_pages | where_exp:'doc','doc.export != false' | where_exp:'doc','doc.url != "/404.html"' -%}
-  {% for doc in pages -%}
-  - title: "{{ doc.title }}"
-    body: {{ doc.content | jsonify }}
-    doc: {{ doc | jsonify }}
-    date: {{ doc.date | date_to_rfc822 }}
-    ext: {{ doc.ext }}
-    format: {% if doc.ext == ".md" %}markdown{% elsif doc.ext == ".html" %}html{% else %}unknown{% endif %}
-    path2: {{ doc.relative_path }}
-    path1: {{ doc.path }}
-    import_id: {{ doc.id }}
-    previous: {{ doc.previous }}
-    collection: {{ doc.collection }}
-    postlet: {{ doc.postlet }}
-    author: {{ doc.author }}
-    slug: {{ doc.slug }}
-    redirects:
-      - {{ doc.url | split: "" | reverse | join: "" | replace_first: "/", "" | split: "" | reverse | join: "" }}
-      - {{ doc.url }}
-      - {{ doc.url }}index.html
-
-  {% endfor -%}
-  {% endcomment %}
-  {% assign static_files = page.static_files | where_exp:'page','page.export != false' | where_exp:'page','page.name != "404.html"' -%}
-  {% for file in static_files -%}
-  {% endfor -%}
+{%- comment %}
+keys: {{ doc.keys | jsonify }}
+{% endcomment -%}

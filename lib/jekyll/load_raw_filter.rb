@@ -8,5 +8,4 @@ module Jekyll
   end
 end
 
-puts "loaded"
 Liquid::Template.register_filter(Jekyll::LoadRaw)
