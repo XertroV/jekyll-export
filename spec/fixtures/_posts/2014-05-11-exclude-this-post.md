@@ -1,5 +1,5 @@
 ---
-sitemap: false
+export: false
 ---
 
-This post should not appear in the sitemap.
+This post should not appear in the export.

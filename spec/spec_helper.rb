@@ -2,7 +2,7 @@
 
 require "jekyll"
 require "fileutils"
-require File.expand_path("../lib/jekyll-sitemap", __dir__)
+require File.expand_path("../lib/jekyll-export", __dir__)
 
 Jekyll.logger.log_level = :error
 

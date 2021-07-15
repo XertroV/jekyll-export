@@ -16,11 +16,11 @@ Lint/Debugger:
 # ExcludedMethods: refine
 Metrics/BlockLength:
   Exclude:
-    - 'spec/jekyll-sitemap_spec.rb'
+    - 'spec/jekyll-export_spec.rb'
     - 'spec/test_jekyll-last-modified-at.rb'
 
 # Offense count: 17
 # Configuration parameters: AllowHeredoc, AllowURI, URISchemes, IgnoreCopDirectives, IgnoredPatterns.
 # URISchemes: http, https
-Metrics/LineLength:
+Layout/LineLength:
   Max: 154

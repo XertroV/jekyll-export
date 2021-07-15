@@ -41,8 +41,8 @@ deploy:
   provider: rubygems
   api_key:
     secure: O8fGRnM6OJCqC2BlVE1BqYfq5aR19ulpiHhQwRiHbtSCh8H4rYt7FLsuOwSTtRQjhWYRRSpdRt2ilfQ6PY6Jx1UkxZq5zo9QAPQ9tKxiFTm7gBpZAiAgb06eyaMBSzyQ8qe2qccaFI6CiZhsiaGMsdKsWuYpuoPmdLPd7aDyYJs=
-  gem: jekyll-sitemap
+  gem: jekyll-export
   on:
     tags: true
-    repo: jekyll/jekyll-sitemap
+    repo: jekyll/jekyll-export
     condition: "$GITHUB_PAGES == 1"

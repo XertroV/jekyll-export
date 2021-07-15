@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-describe(Jekyll::JekyllSitemap) do
+describe(Jekyll::JekyllExport) do
   let(:overrides) do
     {
       "source"      => source_dir,
@@ -18,7 +18,7 @@ describe(Jekyll::JekyllSitemap) do
     Jekyll.configuration(overrides)
   end
   let(:site)     { Jekyll::Site.new(config) }
-  let(:contents) { File.read(dest_dir("sitemap.xml")) }
+  let(:contents) { File.read(dest_dir("export.xml")) }
   before(:each) do
     # simulate `last_modified_at` injection by `jekyll-last-modified-at` plugin
     Jekyll::Hooks.register([:pages, :documents], :post_init) do |page|

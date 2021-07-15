@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-describe(Jekyll::JekyllSitemap) do
+describe(Jekyll::JekyllExport) do
   let(:overrides) do
     {
       "source"      => source_dir,
@@ -18,7 +18,7 @@ describe(Jekyll::JekyllSitemap) do
     Jekyll.configuration(overrides)
   end
   let(:site)     { Jekyll::Site.new(config) }
-  let(:contents) { File.read(dest_dir("sitemap.xml")) }
+  let(:contents) { File.read(dest_dir("export.xml")) }
   before(:each) do
     site.process
   end
@@ -27,8 +27,8 @@ describe(Jekyll::JekyllSitemap) do
     expect(contents).not_to match(%r!\ATHIS IS MY LAYOUT!)
   end
 
-  it "creates a sitemap.xml file" do
-    expect(File.exist?(dest_dir("sitemap.xml"))).to be_truthy
+  it "creates a export.xml file" do
+    expect(File.exist?(dest_dir("export.xml"))).to be_truthy
   end
 
   it "doesn't have multiple new lines or trailing whitespace" do
@@ -36,7 +36,7 @@ describe(Jekyll::JekyllSitemap) do
     expect(contents).to_not match %r!\n{2,}!
   end
 
-  it "puts all the pages in the sitemap.xml file" do
+  it "puts all the pages in the export.xml file" do
     expect(contents).to match %r!<loc>http://example\.org/</loc>!
     expect(contents).to match %r!<loc>http://example\.org/some-subfolder/this-is-a-subpage\.html</loc>!
   end
@@ -45,18 +45,18 @@ describe(Jekyll::JekyllSitemap) do
     expect(contents).to match %r!<loc>http://example\.org/some-subfolder/test_index\.html</loc>!
   end
 
-  it "puts all the posts in the sitemap.xml file" do
+  it "puts all the posts in the export.xml file" do
     expect(contents).to match %r!<loc>http://example\.org/2014/03/04/march-the-fourth\.html</loc>!
     expect(contents).to match %r!<loc>http://example\.org/2014/03/02/march-the-second\.html</loc>!
     expect(contents).to match %r!<loc>http://example\.org/2013/12/12/dec-the-second\.html</loc>!
   end
 
   describe "collections" do
-    it "puts all the `output:true` into sitemap.xml" do
+    it "puts all the `output:true` into export.xml" do
       expect(contents).to match %r!<loc>http://example\.org/my_collection/test\.html</loc>!
     end
 
-    it "doesn't put all the `output:false` into sitemap.xml" do
+    it "doesn't put all the `output:false` into export.xml" do
       expect(contents).to_not match %r!<loc>http://example\.org/other_things/test2\.html</loc>!
     end
 
@@ -79,7 +79,7 @@ describe(Jekyll::JekyllSitemap) do
     expect(contents).to match %r!<lastmod>2013-12-12T00:00:00(-|\+)\d+:\d+</lastmod>!
   end
 
-  it "puts all the static HTML files in the sitemap.xml file" do
+  it "puts all the static HTML files in the export.xml file" do
     expect(contents).to match %r!<loc>http://example\.org/some-subfolder/this-is-a-subfile\.html</loc>!
   end
 
@@ -110,20 +110,20 @@ describe(Jekyll::JekyllSitemap) do
   end
 
   if Gem::Version.new(Jekyll::VERSION) >= Gem::Version.new("3.4.2")
-    it "does not include any static files that have set 'sitemap: false'" do
+    it "does not include any static files that have set 'export: false'" do
       expect(contents).not_to match %r!/static_files/excluded\.pdf!
     end
 
-    it "does not include any static files that have set 'sitemap: false'" do
+    it "does not include any static files that have set 'export: false'" do
       expect(contents).not_to match %r!/static_files/html_file\.html!
     end
   end
 
-  it "does not include posts that have set 'sitemap: false'" do
+  it "does not include posts that have set 'export: false'" do
     expect(contents).not_to match %r!/exclude-this-post\.html</loc>!
   end
 
-  it "does not include pages that have set 'sitemap: false'" do
+  it "does not include pages that have set 'export: false'" do
     expect(contents).not_to match %r!/exclude-this-page\.html</loc>!
   end
 
@@ -170,7 +170,7 @@ describe(Jekyll::JekyllSitemap) do
 
     it "adds baseurl to robots.txt" do
       content = File.read(dest_dir("robots.txt"))
-      expect(content).to match("Sitemap: http://example.org/bass/sitemap.xml")
+      expect(content).to match("Export: http://example.org/bass/export.xml")
     end
   end
 
@@ -204,7 +204,7 @@ describe(Jekyll::JekyllSitemap) do
       end
 
       it "renders liquid" do
-        expect(contents).to match("Sitemap: http://xn--mlaut-jva.example.org/sitemap.xml")
+        expect(contents).to match("Export: http://xn--mlaut-jva.example.org/export.xml")
       end
     end
   end
@@ -237,7 +237,7 @@ describe(Jekyll::JekyllSitemap) do
       let(:fixture) { "static-in-subdir" }
 
       it "generates a valid robot.txt" do
-        expect(robot_contents).to eql("Sitemap: http://example.org/sitemap.xml")
+        expect(robot_contents).to eql("Export: http://example.org/export.xml")
       end
     end
 

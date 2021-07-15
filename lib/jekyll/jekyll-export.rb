@@ -1,16 +1,18 @@
 # frozen_string_literal: true
 
+require 'active_support/core_ext/hash/conversions'
 require "fileutils"
 
 module Jekyll
-  class JekyllSitemap < Jekyll::Generator
+  class JekyllExport < Jekyll::Generator
     safe true
     priority :lowest
 
     # Main plugin action, called by Jekyll-core
     def generate(site)
       @site = site
-      @site.pages << sitemap unless file_exists?("sitemap.xml")
+      @site.pages << export unless file_exists?("export.xml")
+      @site.pages << export_yaml unless file_exists?("export.yaml")
       @site.pages << robots unless file_exists?("robots.txt")
     end
 
@@ -35,22 +37,30 @@ module Jekyll
       @site.static_files.select { |file| INCLUDED_EXTENSIONS.include? file.extname }
     end
 
-    # Path to sitemap.xml template file
-    def source_path(file = "sitemap.xml")
+    # Path to export.xml template file
+    def source_path(file = "export.xml")
       File.expand_path "../#{file}", __dir__
     end
 
-    # Destination for sitemap.xml file within the site source directory
-    def destination_path(file = "sitemap.xml")
+    # Destination for export.xml file within the site source directory
+    def destination_path(file = "export.xml")
       @site.in_dest_dir(file)
     end
 
-    def sitemap
-      site_map = PageWithoutAFile.new(@site, __dir__, "", "sitemap.xml")
+    def export
+      site_map = PageWithoutAFile.new(@site, __dir__, "", "export.xml")
       site_map.content = File.read(source_path).gsub(MINIFY_REGEX, "")
       site_map.data["layout"] = nil
       site_map.data["static_files"] = static_files.map(&:to_liquid)
-      site_map.data["xsl"] = file_exists?("sitemap.xsl")
+      site_map.data["xsl"] = file_exists?("export.xsl")
+      site_map
+    end
+
+    def export_yaml
+      site_map = PageWithoutAFile.new(@site, __dir__, "", "export.yaml")
+      site_map.content = File.read(source_path("export.yaml"))
+      site_map.data["layout"] = nil
+      site_map.data["static_files"] = static_files.map(&:to_liquid)
       site_map
     end
 
