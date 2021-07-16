@@ -1,3 +1,6 @@
+# Note: html_pages are listed twice: once in redirects, and once in posts. you can choose which should go where.
+# static_files are only listed in redirects
+# collections are only listed in posts
 metadata:
   default_parent_id: "TODO"
   # default_author_id: "TODO"
@@ -31,14 +34,15 @@ posts:
   {%- for collection in collections -%}
     {%- assign docs = collection.docs | where_exp:'doc','doc.export != false' -%}
     {%- for doc in docs %}
-  - title: {{ doc.title | jsonify }}
+  - orig_type: collection={{ doc.collection }}
+    title: {{ doc.title | jsonify }}
     {%- assign body = doc.path | load_raw | split: "---" | slice: 2, 999999 | join: "---" | jsonify -%}
     {%- assign body_contains_html = body | contains_html %}
     body: {{ body }}
-    date: {{ doc.date | date_to_rfc822 }}
+    date: {{ doc.date | date_to_ts }}
     format: {% if doc.ext == ".md" %}markdown{% elsif doc.ext == ".html" %}html{% else %}unknown{% endif %}
     import_id: {{ doc.id }}
-    author: {{ doc.author }}
+    author: {{ doc.author | jsonify }}
     {% if doc.ext == ".html" or body_contains_html -%}
     escape_html: false
     {% endif -%}
@@ -47,9 +51,30 @@ posts:
       - {{ doc.url | rstrip_slash }}
       - {{ doc.url }}
       - {{ doc.url }}index.html
-
-    {% endfor -%}
+    {%- endfor -%}
+  {%- endfor %}
+  # MIDPOINT
+  {%- assign docs = site.html_pages | where_exp:'doc','doc.export != false and doc.url != "/404.html"' -%}
+  {%- for doc in docs %}
+  - orig_type: html_page
+    title: {{ doc.title | jsonify }}
+    {%- assign body = doc.path | load_raw | split: "---" | slice: 2, 999999 | join: "---" | jsonify -%}
+    {%- assign body_contains_html = body | contains_html %}
+    body: {{ body }}
+    date: {% current_date %}
+    format: html
+    import_id: {{ doc.path }}
+    author: {{ doc.author | jsonify }}
+    escape_html: false
+    postlet: {{ doc.postlet | jsonify }}
+    collection: {{ doc.collection | jsonify }}
+    redirects:
+      - {{ doc.url | rstrip_slash }}
+      - {{ doc.url }}
+      - {{ doc.url }}index.html
   {%- endfor -%}
+
+
 {%- comment %}
 keys: {{ doc.keys | jsonify }}
 {% endcomment -%}
